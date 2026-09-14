@@ -1,0 +1,4 @@
+<Solution>
+  <Project Path="SondageAPI.Tests/SondageAPI.Tests.csproj" />
+  <Project Path="SondageAPI/SondageAPI.csproj" />
+</Solution>
