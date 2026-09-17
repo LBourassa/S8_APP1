@@ -1,0 +1,44 @@
+{
+  "titre": "Sondage 1 - Habitudes de lecture",
+  "questions": [
+    {
+      "id": "q1",
+      "texte": "À quelle tranche d'âge appartenez-vous?",
+      "options": [
+        { "cle": "a", "texte": "0-25 ans" },
+        { "cle": "b", "texte": "25-50 ans" },
+        { "cle": "c", "texte": "50-75 ans" },
+        { "cle": "d", "texte": "75 ans et plus" }
+      ]
+    },
+    {
+      "id": "q2",
+      "texte": "Êtes-vous une femme ou un homme?",
+      "options": [
+        { "cle": "a", "texte": "Femme" },
+        { "cle": "b", "texte": "Homme" },
+        { "cle": "c", "texte": "Je ne veux pas répondre" }
+      ]
+    },
+    {
+      "id": "q3",
+      "texte": "Quel journal lisez-vous à la maison?",
+      "options": [
+        { "cle": "a", "texte": "La Presse" },
+        { "cle": "b", "texte": "Le Journal de Montréal" },
+        { "cle": "c", "texte": "The Gazette" },
+        { "cle": "d", "texte": "Le Devoir" }
+      ]
+    },
+    {
+      "id": "q4",
+      "texte": "Combien de temps accordez-vous à la lecture de votre journal quotidiennement?",
+      "options": [
+        { "cle": "a", "texte": "Moins de 10 minutes" },
+        { "cle": "b", "texte": "Entre 10 et 30 minutes" },
+        { "cle": "c", "texte": "Entre 30 et 60 minutes" },
+        { "cle": "d", "texte": "60 minutes ou plus" }
+      ]
+    }
+  ]
+}

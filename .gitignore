@@ -480,3 +480,6 @@ $RECYCLE.BIN/
 
 # Vim temporary swap files
 *.swp
+
+# Fichiers de "base de donnees" JSON generes au runtime
+SondageAPI/Data/

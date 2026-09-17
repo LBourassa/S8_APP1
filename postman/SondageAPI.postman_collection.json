@@ -1,0 +1,269 @@
+{
+  "info": {
+    "name": "SondageAPI",
+    "description": "Collection de demonstration pour l'API de sondage (Coup de Sonde). Deux sondages sont disponibles : sondage1 et sondage2. Ajustez baseUrl et apiKey dans l'environnement 'SondageAPI - Local' selon le port HTTPS affiche au demarrage (voir Properties/launchSettings.json). Les cles de participation retournees par CreerParticipation doivent etre copiees manuellement dans les variables d'environnement correspondantes (cleSondage1, cleIncomplet) avant d'appeler les requetes qui en dependent. Chaque cle est a usage unique et n'est valide que pour le sondage pour lequel elle a ete emise (impossible structurellement de la faire servir a un autre sondage). Organisee en deux dossiers, un par controleur.",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "item": [
+    {
+      "name": "Sondages",
+      "item": [
+        {
+          "name": "ObtenirSondages",
+          "request": {
+            "method": "GET",
+            "header": [
+              { "key": "X-API-KEY", "value": "{{apiKey}}" }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/sondages",
+              "host": [ "{{baseUrl}}" ],
+              "path": [ "api", "sondages" ]
+            }
+          }
+        },
+        {
+          "name": "ObtenirSondage",
+          "request": {
+            "method": "GET",
+            "header": [
+              { "key": "X-API-KEY", "value": "{{apiKey}}" }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/sondages/sondage1",
+              "host": [ "{{baseUrl}}" ],
+              "path": [ "api", "sondages", "sondage1" ]
+            }
+          }
+        },
+        {
+          "name": "ObtenirSondage_Sondage2",
+          "request": {
+            "method": "GET",
+            "header": [
+              { "key": "X-API-KEY", "value": "{{apiKey}}" }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/sondages/sondage2",
+              "host": [ "{{baseUrl}}" ],
+              "path": [ "api", "sondages", "sondage2" ]
+            }
+          }
+        },
+        {
+          "name": "ObtenirSondage_Introuvable",
+          "request": {
+            "method": "GET",
+            "header": [
+              { "key": "X-API-KEY", "value": "{{apiKey}}" }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/sondages/sondage-inexistant",
+              "host": [ "{{baseUrl}}" ],
+              "path": [ "api", "sondages", "sondage-inexistant" ]
+            },
+            "description": "Attendu : 404 avec ErreurDto."
+          }
+        }
+      ]
+    },
+    {
+      "name": "Participations",
+      "item": [
+        {
+          "name": "CreerParticipation",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "X-API-KEY", "value": "{{apiKey}}" }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/participations/sondage1",
+              "host": [ "{{baseUrl}}" ],
+              "path": [ "api", "participations", "sondage1" ]
+            },
+            "description": "Attendu : 201 avec CreationSondageDto (cle, sondageId, dateEmission). Copier la valeur de 'cle' dans la variable d'environnement cleSondage1 avant les requetes suivantes."
+          }
+        },
+        {
+          "name": "CreerParticipation_Introuvable",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "X-API-KEY", "value": "{{apiKey}}" }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/participations/sondage-inexistant",
+              "host": [ "{{baseUrl}}" ],
+              "path": [ "api", "participations", "sondage-inexistant" ]
+            },
+            "description": "Attendu : 404 avec ErreurDto (sondage inexistant)."
+          }
+        },
+        {
+          "name": "CreerParticipation_PourReponseIncomplete",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "X-API-KEY", "value": "{{apiKey}}" }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/participations/sondage1",
+              "host": [ "{{baseUrl}}" ],
+              "path": [ "api", "participations", "sondage1" ]
+            },
+            "description": "Emet une deuxieme cle, dediee au scenario reponse-manquante/correction ci-dessous. Copier 'cle' dans la variable d'environnement cleIncomplet."
+          }
+        },
+        {
+          "name": "ObtenirStatutParticipation",
+          "request": {
+            "method": "GET",
+            "header": [
+              { "key": "X-API-KEY", "value": "{{apiKey}}" }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/participations/{{cleSondage1}}",
+              "host": [ "{{baseUrl}}" ],
+              "path": [ "api", "participations", "{{cleSondage1}}" ]
+            }
+          }
+        },
+        {
+          "name": "ObtenirStatutParticipation_CleInexistante",
+          "request": {
+            "method": "GET",
+            "header": [
+              { "key": "X-API-KEY", "value": "{{apiKey}}" }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/participations/cle-qui-nexiste-pas",
+              "host": [ "{{baseUrl}}" ],
+              "path": [ "api", "participations", "cle-qui-nexiste-pas" ]
+            },
+            "description": "Attendu : 200 avec StatutParticipationDto (existe=false, sondageId=null)."
+          }
+        },
+        {
+          "name": "SoumettreParticipation",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "X-API-KEY", "value": "{{apiKey}}" },
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"reponses\": [\n    { \"questionId\": \"q1\", \"valeur\": \"b\" },\n    { \"questionId\": \"q2\", \"valeur\": \"a\" },\n    { \"questionId\": \"q3\", \"valeur\": \"d\" },\n    { \"questionId\": \"q4\", \"valeur\": \"c\" }\n  ]\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/participations/{{cleSondage1}}/soumission",
+              "host": [ "{{baseUrl}}" ],
+              "path": [ "api", "participations", "{{cleSondage1}}", "soumission" ]
+            },
+            "description": "Attendu : 200 avec ConfirmationSoumissionDto."
+          }
+        },
+        {
+          "name": "SoumettreParticipation_DejaSoumise",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "X-API-KEY", "value": "{{apiKey}}" },
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"reponses\": [\n    { \"questionId\": \"q1\", \"valeur\": \"b\" },\n    { \"questionId\": \"q2\", \"valeur\": \"a\" },\n    { \"questionId\": \"q3\", \"valeur\": \"d\" },\n    { \"questionId\": \"q4\", \"valeur\": \"c\" }\n  ]\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/participations/{{cleSondage1}}/soumission",
+              "host": [ "{{baseUrl}}" ],
+              "path": [ "api", "participations", "{{cleSondage1}}", "soumission" ]
+            },
+            "description": "A rejouer juste apres SoumettreParticipation, avec la meme cle. Attendu : 409 avec ErreurDto."
+          }
+        },
+        {
+          "name": "SoumettreParticipation_CleInvalide",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "X-API-KEY", "value": "{{apiKey}}" },
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"reponses\": [\n    { \"questionId\": \"q1\", \"valeur\": \"b\" },\n    { \"questionId\": \"q2\", \"valeur\": \"a\" },\n    { \"questionId\": \"q3\", \"valeur\": \"d\" },\n    { \"questionId\": \"q4\", \"valeur\": \"c\" }\n  ]\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/participations/cle-qui-nexiste-pas/soumission",
+              "host": [ "{{baseUrl}}" ],
+              "path": [ "api", "participations", "cle-qui-nexiste-pas", "soumission" ]
+            },
+            "description": "Attendu : 401 avec ErreurDto (cle de participation invalide)."
+          }
+        },
+        {
+          "name": "SoumettreParticipation_SansApiKey",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"reponses\": [\n    { \"questionId\": \"q1\", \"valeur\": \"b\" }\n  ]\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/participations/{{cleSondage1}}/soumission",
+              "host": [ "{{baseUrl}}" ],
+              "path": [ "api", "participations", "{{cleSondage1}}", "soumission" ]
+            },
+            "description": "Sans en-tete X-API-KEY. Attendu : 401, rejete par ServiceAuthentification avant meme d'atteindre le controleur."
+          }
+        },
+        {
+          "name": "SoumettreParticipation_ReponseManquante",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "X-API-KEY", "value": "{{apiKey}}" },
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"reponses\": [\n    { \"questionId\": \"q1\", \"valeur\": \"b\" },\n    { \"questionId\": \"q2\", \"valeur\": \"a\" },\n    { \"questionId\": \"q3\", \"valeur\": \"d\" }\n  ]\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/participations/{{cleIncomplet}}/soumission",
+              "host": [ "{{baseUrl}}" ],
+              "path": [ "api", "participations", "{{cleIncomplet}}", "soumission" ]
+            },
+            "description": "q4 manquante. Attendu : 400 avec ErreurDto ; la cle n'est PAS consommee (voir SoumettreParticipation_ApresCorrection)."
+          }
+        },
+        {
+          "name": "SoumettreParticipation_ApresCorrection",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "X-API-KEY", "value": "{{apiKey}}" },
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"reponses\": [\n    { \"questionId\": \"q1\", \"valeur\": \"b\" },\n    { \"questionId\": \"q2\", \"valeur\": \"a\" },\n    { \"questionId\": \"q3\", \"valeur\": \"d\" },\n    { \"questionId\": \"q4\", \"valeur\": \"c\" }\n  ]\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/participations/{{cleIncomplet}}/soumission",
+              "host": [ "{{baseUrl}}" ],
+              "path": [ "api", "participations", "{{cleIncomplet}}", "soumission" ]
+            },
+            "description": "Meme cle que la requete precedente, reponses completes cette fois. Attendu : 200, preuve que la cle n'avait pas ete brulee par la soumission invalide."
+          }
+        }
+      ]
+    }
+  ]
+}

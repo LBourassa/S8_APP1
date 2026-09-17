@@ -1,14 +1,50 @@
+using Microsoft.AspNetCore.Authentication;
+using Microsoft.OpenApi;
+using SondageAPI.Repositories;
 using SondageAPI.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// Ajout des contrôleurs et de votre service métier
+// --- Contrôleurs ---
 builder.Services.AddControllers();
-builder.Services.AddSingleton<SondageService>();
 
+// --- Persistance (fichiers JSON / texte) et services métier ---
+builder.Services.AddSingleton<ParticipantRepository>();
+builder.Services.AddSingleton<ParticipationRepository>();
+builder.Services.AddSingleton<ServiceSondage>();
+builder.Services.AddScoped<ServiceParticipation>();
+
+// --- Authentification par clé d'API (en-tête X-API-KEY) ---
+builder.Services
+    .AddAuthentication(ServiceAuthentification.SchemaParDefaut)
+    .AddScheme<AuthenticationSchemeOptions, ServiceAuthentification>(
+        ServiceAuthentification.SchemaParDefaut, _ => { });
+builder.Services.AddAuthorization();
+
+// --- Swagger / OpenAPI (avec le schéma de sécurité X-API-KEY pour Postman) ---
 builder.Services.AddEndpointsApiExplorer();
-// Génération de Swagger (sans la configuration du cadenas qui plante dans .NET 10)
-builder.Services.AddSwaggerGen();
+builder.Services.AddSwaggerGen(options =>
+{
+    options.SwaggerDoc("v1", new OpenApiInfo
+    {
+        Title = "Sondage API",
+        Version = "v1",
+        Description = "API de sondage sécurisée - Coup de Sonde"
+    });
+
+    options.AddSecurityDefinition(ServiceAuthentification.NomEntete, new OpenApiSecurityScheme
+    {
+        Name = ServiceAuthentification.NomEntete,
+        Type = SecuritySchemeType.ApiKey,
+        In = ParameterLocation.Header,
+        Description = "Clé d'API client. Exemple : \"X-API-KEY: {cle}\""
+    });
+
+    options.AddSecurityRequirement(document => new OpenApiSecurityRequirement
+    {
+        [new OpenApiSecuritySchemeReference(ServiceAuthentification.NomEntete, document)] = new List<string>()
+    });
+});
 
 var app = builder.Build();
 
@@ -20,24 +56,8 @@ if (app.Environment.IsDevelopment())
 
 app.UseHttpsRedirection();
 
-// Pare-feu de sécurité (Middleware) - C'est ici que la vraie protection se passe
-app.Use(async (context, next) =>
-{
-    if (context.Request.Path.StartsWithSegments("/api", StringComparison.OrdinalIgnoreCase))
-    {
-        var expectedKey = builder.Configuration["ApiKey"] ?? "DefaultSecretKey123";
-        
-        // Vérifie si la requête Postman contient le header X-API-KEY
-        if (!context.Request.Headers.TryGetValue("X-API-KEY", out var extractedKey) || extractedKey != expectedKey)
-        {
-            context.Response.StatusCode = 401;
-            await context.Response.WriteAsync("Acces non autorise. Cle d'API manquante ou invalide.").ConfigureAwait(false);
-            return;
-        }
-    }
-    await next(context).ConfigureAwait(false);
-});
-
+app.UseAuthentication();
 app.UseAuthorization();
+
 app.MapControllers();
 app.Run();

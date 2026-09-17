@@ -1,0 +1,44 @@
+{
+  "titre": "Sondage 2 - Café et alcool",
+  "questions": [
+    {
+      "id": "q1",
+      "texte": "À quelle tranche d'âge appartenez-vous?",
+      "options": [
+        { "cle": "a", "texte": "0-25 ans" },
+        { "cle": "b", "texte": "25-50 ans" },
+        { "cle": "c", "texte": "50-75 ans" },
+        { "cle": "d", "texte": "75 ans et plus" }
+      ]
+    },
+    {
+      "id": "q2",
+      "texte": "Êtes-vous une femme ou un homme?",
+      "options": [
+        { "cle": "a", "texte": "Femme" },
+        { "cle": "b", "texte": "Homme" },
+        { "cle": "c", "texte": "Je ne veux pas répondre" }
+      ]
+    },
+    {
+      "id": "q3",
+      "texte": "Combien de tasses de café buvez-vous chaque jour?",
+      "options": [
+        { "cle": "a", "texte": "Je ne bois pas de café" },
+        { "cle": "b", "texte": "Entre 1 et 5 tasses" },
+        { "cle": "c", "texte": "Entre 6 et 10 tasses" },
+        { "cle": "d", "texte": "10 tasses ou plus" }
+      ]
+    },
+    {
+      "id": "q4",
+      "texte": "Combien de consommations alcoolisées buvez-vous chaque jour?",
+      "options": [
+        { "cle": "a", "texte": "0" },
+        { "cle": "b", "texte": "1" },
+        { "cle": "c", "texte": "2 ou 3" },
+        { "cle": "d", "texte": "3 ou plus" }
+      ]
+    }
+  ]
+}
