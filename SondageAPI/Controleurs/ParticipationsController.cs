@@ -80,6 +80,15 @@ namespace SondageAPI.Controleurs
         [ProducesResponseType(typeof(ErreurDto), StatusCodes.Status409Conflict)]
         public async Task<IActionResult> SoumettreParticipation(string cle, [FromBody] SoumissionSondageDto dto)
         {
+            // Premiere validation valider le body et le url que cest le meme id.
+            if (!string.Equals(dto.Cle, cle, StringComparison.Ordinal))
+            {
+                return BadRequest(new ErreurDto
+                {
+                    Erreur = "La cle du corps de la requete ne correspond pas a la cle de l'URL."
+                });
+            }
+
             var (resultat, participation, erreurs) = await _serviceParticipation.SoumettreAsync(cle, dto);
 
             return resultat switch

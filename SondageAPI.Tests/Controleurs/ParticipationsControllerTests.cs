@@ -17,7 +17,8 @@ namespace SondageAPI.Tests.Controleurs;
 /// tester le controleur seul, sans toucher au systeme de fichiers. Chaque
 /// branche des trois actions du controleur est couverte, y compris le cas
 /// "resultat inconnu" du switch de SoumettreParticipation (atteignable
-/// uniquement en simulant une valeur d'enum hors des cas nommes).
+/// uniquement en simulant une valeur d'enum hors des cas nommes) et la
+/// validation URL/corps qui precede desormais l'appel au service.
 /// </summary>
 public class ParticipationsControllerTests
 {
@@ -137,12 +138,33 @@ public class ParticipationsControllerTests
         Assert.Null(dto.SondageId);
     }
 
-    // --- SoumettreParticipation(cle, dto) : les 5 branches du switch ---
+    // --- SoumettreParticipation(cle, dto) : validation URL/corps, puis les 5 branches du switch ---
 
-    private static SoumissionSondageDto CreerSoumissionExemple() => new()
+    private static SoumissionSondageDto CreerSoumissionExemple(string cle) => new()
     {
+        Cle = cle,
         Reponses = new List<ReponseDto> { new() { QuestionId = "q1", Valeur = "a" } }
     };
+
+    [Fact]
+    public async Task SoumettreParticipation_CleUrlNeCorrespondPasAuCorps_RetourneBadRequestSansAppelerLeService()
+    {
+        // Arrange (body et request url differents)
+        var serviceParticipation = CreerServiceParticipationMock();
+        var dto = CreerSoumissionExemple("cle-du-corps");
+        var controleur = new ParticipationsController(serviceParticipation.Object);
+
+        // Act
+        var resultat = await controleur.SoumettreParticipation("cle-de-lurl", dto);
+
+        // Assert
+        var resultatBadRequest = Assert.IsType<BadRequestObjectResult>(resultat);
+        var erreur = Assert.IsType<ErreurDto>(resultatBadRequest.Value);
+        Assert.Contains("ne correspond pas", erreur.Erreur);
+        serviceParticipation.Verify(
+            s => s.SoumettreAsync(It.IsAny<string>(), It.IsAny<SoumissionSondageDto>()),
+            Times.Never);
+    }
 
     [Fact]
     public async Task SoumettreParticipation_Succes_RetourneOkAvecConfirmation()
@@ -156,7 +178,7 @@ public class ParticipationsControllerTests
         var controleur = new ParticipationsController(serviceParticipation.Object);
 
         // Act
-        var resultat = await controleur.SoumettreParticipation("cle-valide", CreerSoumissionExemple());
+        var resultat = await controleur.SoumettreParticipation("cle-valide", CreerSoumissionExemple("cle-valide"));
 
         // Assert
         var resultatOk = Assert.IsType<OkObjectResult>(resultat);
@@ -176,7 +198,7 @@ public class ParticipationsControllerTests
         var controleur = new ParticipationsController(serviceParticipation.Object);
 
         // Act
-        var resultat = await controleur.SoumettreParticipation("cle-valide", CreerSoumissionExemple());
+        var resultat = await controleur.SoumettreParticipation("cle-valide", CreerSoumissionExemple("cle-valide"));
 
         // Assert
         var resultatBadRequest = Assert.IsType<BadRequestObjectResult>(resultat);
@@ -194,7 +216,7 @@ public class ParticipationsControllerTests
         var controleur = new ParticipationsController(serviceParticipation.Object);
 
         // Act
-        var resultat = await controleur.SoumettreParticipation("cle-utilisee", CreerSoumissionExemple());
+        var resultat = await controleur.SoumettreParticipation("cle-utilisee", CreerSoumissionExemple("cle-utilisee"));
 
         // Assert
         var resultatConflict = Assert.IsType<ConflictObjectResult>(resultat);
@@ -211,7 +233,7 @@ public class ParticipationsControllerTests
         var controleur = new ParticipationsController(serviceParticipation.Object);
 
         // Act
-        var resultat = await controleur.SoumettreParticipation("cle-inconnue", CreerSoumissionExemple());
+        var resultat = await controleur.SoumettreParticipation("cle-inconnue", CreerSoumissionExemple("cle-inconnue"));
 
         // Assert
         var resultatUnauthorized = Assert.IsType<UnauthorizedObjectResult>(resultat);
@@ -233,7 +255,7 @@ public class ParticipationsControllerTests
         var controleur = new ParticipationsController(serviceParticipation.Object);
 
         // Act
-        var resultat = await controleur.SoumettreParticipation("cle-quelconque", CreerSoumissionExemple());
+        var resultat = await controleur.SoumettreParticipation("cle-quelconque", CreerSoumissionExemple("cle-quelconque"));
 
         // Assert
         var resultatStatut = Assert.IsType<StatusCodeResult>(resultat);

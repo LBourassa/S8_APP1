@@ -154,14 +154,34 @@
             ],
             "body": {
               "mode": "raw",
-              "raw": "{\n  \"reponses\": [\n    { \"questionId\": \"q1\", \"valeur\": \"b\" },\n    { \"questionId\": \"q2\", \"valeur\": \"a\" },\n    { \"questionId\": \"q3\", \"valeur\": \"d\" },\n    { \"questionId\": \"q4\", \"valeur\": \"c\" }\n  ]\n}"
+              "raw": "{\n  \"cle\": \"{{cleSondage1}}\",\n  \"reponses\": [\n    { \"questionId\": \"q1\", \"valeur\": \"b\" },\n    { \"questionId\": \"q2\", \"valeur\": \"a\" },\n    { \"questionId\": \"q3\", \"valeur\": \"d\" },\n    { \"questionId\": \"q4\", \"valeur\": \"c\" }\n  ]\n}"
             },
             "url": {
               "raw": "{{baseUrl}}/api/participations/{{cleSondage1}}/soumission",
               "host": [ "{{baseUrl}}" ],
               "path": [ "api", "participations", "{{cleSondage1}}", "soumission" ]
             },
-            "description": "Attendu : 200 avec ConfirmationSoumissionDto."
+            "description": "Attendu : 200 avec ConfirmationSoumissionDto. Le champ 'cle' du corps doit correspondre a la cle de l'URL (voir SoumettreParticipation_CleUrlEtCorpsDifferentes)."
+          }
+        },
+        {
+          "name": "SoumettreParticipation_CleUrlEtCorpsDifferentes",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "X-API-KEY", "value": "{{apiKey}}" },
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"cle\": \"une-cle-differente-de-lurl\",\n  \"reponses\": [\n    { \"questionId\": \"q1\", \"valeur\": \"b\" },\n    { \"questionId\": \"q2\", \"valeur\": \"a\" },\n    { \"questionId\": \"q3\", \"valeur\": \"d\" },\n    { \"questionId\": \"q4\", \"valeur\": \"c\" }\n  ]\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/participations/{{cleSondage1}}/soumission",
+              "host": [ "{{baseUrl}}" ],
+              "path": [ "api", "participations", "{{cleSondage1}}", "soumission" ]
+            },
+            "description": "Le champ 'cle' du corps ne correspond pas a la cle de l'URL. Attendu : 400 avec ErreurDto, sans que le service ne soit sollicite (la cle de l'URL n'est ni consommee ni meme recherchee)."
           }
         },
         {
@@ -174,7 +194,7 @@
             ],
             "body": {
               "mode": "raw",
-              "raw": "{\n  \"reponses\": [\n    { \"questionId\": \"q1\", \"valeur\": \"b\" },\n    { \"questionId\": \"q2\", \"valeur\": \"a\" },\n    { \"questionId\": \"q3\", \"valeur\": \"d\" },\n    { \"questionId\": \"q4\", \"valeur\": \"c\" }\n  ]\n}"
+              "raw": "{\n  \"cle\": \"{{cleSondage1}}\",\n  \"reponses\": [\n    { \"questionId\": \"q1\", \"valeur\": \"b\" },\n    { \"questionId\": \"q2\", \"valeur\": \"a\" },\n    { \"questionId\": \"q3\", \"valeur\": \"d\" },\n    { \"questionId\": \"q4\", \"valeur\": \"c\" }\n  ]\n}"
             },
             "url": {
               "raw": "{{baseUrl}}/api/participations/{{cleSondage1}}/soumission",
@@ -194,14 +214,14 @@
             ],
             "body": {
               "mode": "raw",
-              "raw": "{\n  \"reponses\": [\n    { \"questionId\": \"q1\", \"valeur\": \"b\" },\n    { \"questionId\": \"q2\", \"valeur\": \"a\" },\n    { \"questionId\": \"q3\", \"valeur\": \"d\" },\n    { \"questionId\": \"q4\", \"valeur\": \"c\" }\n  ]\n}"
+              "raw": "{\n  \"cle\": \"cle-qui-nexiste-pas\",\n  \"reponses\": [\n    { \"questionId\": \"q1\", \"valeur\": \"b\" },\n    { \"questionId\": \"q2\", \"valeur\": \"a\" },\n    { \"questionId\": \"q3\", \"valeur\": \"d\" },\n    { \"questionId\": \"q4\", \"valeur\": \"c\" }\n  ]\n}"
             },
             "url": {
               "raw": "{{baseUrl}}/api/participations/cle-qui-nexiste-pas/soumission",
               "host": [ "{{baseUrl}}" ],
               "path": [ "api", "participations", "cle-qui-nexiste-pas", "soumission" ]
             },
-            "description": "Attendu : 401 avec ErreurDto (cle de participation invalide)."
+            "description": "cle du corps identique a celle de l'URL (la validation URL/corps passe), mais cette cle n'existe pas cote serveur. Attendu : 401 avec ErreurDto (cle de participation invalide)."
           }
         },
         {
@@ -213,7 +233,7 @@
             ],
             "body": {
               "mode": "raw",
-              "raw": "{\n  \"reponses\": [\n    { \"questionId\": \"q1\", \"valeur\": \"b\" }\n  ]\n}"
+              "raw": "{\n  \"cle\": \"{{cleSondage1}}\",\n  \"reponses\": [\n    { \"questionId\": \"q1\", \"valeur\": \"b\" }\n  ]\n}"
             },
             "url": {
               "raw": "{{baseUrl}}/api/participations/{{cleSondage1}}/soumission",
@@ -233,7 +253,7 @@
             ],
             "body": {
               "mode": "raw",
-              "raw": "{\n  \"reponses\": [\n    { \"questionId\": \"q1\", \"valeur\": \"b\" },\n    { \"questionId\": \"q2\", \"valeur\": \"a\" },\n    { \"questionId\": \"q3\", \"valeur\": \"d\" }\n  ]\n}"
+              "raw": "{\n  \"cle\": \"{{cleIncomplet}}\",\n  \"reponses\": [\n    { \"questionId\": \"q1\", \"valeur\": \"b\" },\n    { \"questionId\": \"q2\", \"valeur\": \"a\" },\n    { \"questionId\": \"q3\", \"valeur\": \"d\" }\n  ]\n}"
             },
             "url": {
               "raw": "{{baseUrl}}/api/participations/{{cleIncomplet}}/soumission",
@@ -253,7 +273,7 @@
             ],
             "body": {
               "mode": "raw",
-              "raw": "{\n  \"reponses\": [\n    { \"questionId\": \"q1\", \"valeur\": \"b\" },\n    { \"questionId\": \"q2\", \"valeur\": \"a\" },\n    { \"questionId\": \"q3\", \"valeur\": \"d\" },\n    { \"questionId\": \"q4\", \"valeur\": \"c\" }\n  ]\n}"
+              "raw": "{\n  \"cle\": \"{{cleIncomplet}}\",\n  \"reponses\": [\n    { \"questionId\": \"q1\", \"valeur\": \"b\" },\n    { \"questionId\": \"q2\", \"valeur\": \"a\" },\n    { \"questionId\": \"q3\", \"valeur\": \"d\" },\n    { \"questionId\": \"q4\", \"valeur\": \"c\" }\n  ]\n}"
             },
             "url": {
               "raw": "{{baseUrl}}/api/participations/{{cleIncomplet}}/soumission",
