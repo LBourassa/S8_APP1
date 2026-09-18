@@ -97,7 +97,9 @@ public class ServiceSondage
         }
 
         var questionsConnues = new HashSet<string>(sondage.Questions.Select(q => q.Id), StringComparer.OrdinalIgnoreCase);
-        foreach (var idInconnu in reponsesParQuestion.Keys.Where(id => !questionsConnues.Contains(id)))
+
+        var idsInconnus = reponsesParQuestion.Keys.Where(id => !questionsConnues.Contains(id)).ToList();
+        foreach (var idInconnu in idsInconnus)
         {
             erreurs.Add($"Question inconnue pour ce sondage : '{idInconnu}'.");
         }

@@ -49,7 +49,10 @@ public class ParticipantRepository
         }
     }
 
-    public async Task<ResultatConsommationCle> TryConsumeAsync(string cle)
+    // "virtual" : uniquement pour permettre a Moq de simuler le cas
+    // "Introuvable" dans les tests de ServiceParticipation (impossible a
+    // provoquer avec un vrai repository, puisqu'aucune suppression n'existe).
+    public virtual async Task<ResultatConsommationCle> TryConsumeAsync(string cle)
     {
         await Lock.WaitAsync().ConfigureAwait(false);
         try

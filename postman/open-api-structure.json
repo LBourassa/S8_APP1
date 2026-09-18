@@ -1,0 +1,420 @@
+{
+  "openapi": "3.0.4",
+  "info": {
+    "title": "Sondage API",
+    "description": "API de sondage sécurisée - Coup de Sonde",
+    "version": "v1"
+  },
+  "paths": {
+    "/api/Participations/{sondageId}": {
+      "post": {
+        "tags": [
+          "Participations"
+        ],
+        "parameters": [
+          {
+            "name": "sondageId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": "Created",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CreationSondageDto"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not Found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErreurDto"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/Participations/{cle}": {
+      "get": {
+        "tags": [
+          "Participations"
+        ],
+        "parameters": [
+          {
+            "name": "cle",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/StatutParticipationDto"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/Participations/{cle}/soumission": {
+      "post": {
+        "tags": [
+          "Participations"
+        ],
+        "parameters": [
+          {
+            "name": "cle",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/SoumissionSondageDto"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/SoumissionSondageDto"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/SoumissionSondageDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ConfirmationSoumissionDto"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErreurDto"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErreurDto"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "Conflict",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErreurDto"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/Sondages": {
+      "get": {
+        "tags": [
+          "Sondages"
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/SondageResumeDto"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/Sondages/{sondageId}": {
+      "get": {
+        "tags": [
+          "Sondages"
+        ],
+        "parameters": [
+          {
+            "name": "sondageId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SondageDto"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not Found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErreurDto"
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "ConfirmationSoumissionDto": {
+        "type": "object",
+        "properties": {
+          "succes": {
+            "type": "boolean"
+          },
+          "message": {
+            "type": "string",
+            "nullable": true
+          },
+          "dateSoumission": {
+            "type": "string",
+            "format": "date-time"
+          }
+        },
+        "additionalProperties": false
+      },
+      "CreationSondageDto": {
+        "type": "object",
+        "properties": {
+          "cle": {
+            "type": "string",
+            "nullable": true
+          },
+          "sondageId": {
+            "type": "string",
+            "nullable": true
+          },
+          "dateEmission": {
+            "type": "string",
+            "format": "date-time"
+          }
+        },
+        "additionalProperties": false
+      },
+      "ErreurDto": {
+        "type": "object",
+        "properties": {
+          "erreur": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "OptionDto": {
+        "type": "object",
+        "properties": {
+          "cle": {
+            "type": "string",
+            "nullable": true
+          },
+          "texte": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "QuestionDto": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "nullable": true
+          },
+          "texte": {
+            "type": "string",
+            "nullable": true
+          },
+          "options": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/OptionDto"
+            },
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "ReponseDto": {
+        "required": [
+          "questionId",
+          "valeur"
+        ],
+        "type": "object",
+        "properties": {
+          "questionId": {
+            "minLength": 1,
+            "type": "string"
+          },
+          "valeur": {
+            "minLength": 1,
+            "type": "string"
+          }
+        },
+        "additionalProperties": false
+      },
+      "SondageDto": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "nullable": true
+          },
+          "titre": {
+            "type": "string",
+            "nullable": true
+          },
+          "questions": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/QuestionDto"
+            },
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "SondageResumeDto": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "nullable": true
+          },
+          "titre": {
+            "type": "string",
+            "nullable": true
+          },
+          "nombreQuestions": {
+            "type": "integer",
+            "format": "int32"
+          }
+        },
+        "additionalProperties": false
+      },
+      "SoumissionSondageDto": {
+        "required": [
+          "cle",
+          "reponses"
+        ],
+        "type": "object",
+        "properties": {
+          "cle": {
+            "minLength": 1,
+            "type": "string"
+          },
+          "reponses": {
+            "minItems": 1,
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/ReponseDto"
+            }
+          }
+        },
+        "additionalProperties": false
+      },
+      "StatutParticipationDto": {
+        "type": "object",
+        "properties": {
+          "cle": {
+            "type": "string",
+            "nullable": true
+          },
+          "existe": {
+            "type": "boolean"
+          },
+          "estUtilisee": {
+            "type": "boolean"
+          },
+          "sondageId": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    "securitySchemes": {
+      "X-API-KEY": {
+        "type": "apiKey",
+        "description": "Clé d'API client. Exemple : \"X-API-KEY: {cle}\"",
+        "name": "X-API-KEY",
+        "in": "header"
+      }
+    }
+  },
+  "security": [
+    {
+      "X-API-KEY": [ ]
+    }
+  ],
+  "tags": [
+    {
+      "name": "Participations"
+    },
+    {
+      "name": "Sondages"
+    }
+  ]
+}
